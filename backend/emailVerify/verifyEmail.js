@@ -34,7 +34,7 @@ export const verifyEmail = async (accessToken, email) => {
 
                         <div style="text-align: center; margin: 25px 0;">
                             <a 
-                                href="http://localhost:5173/verify/${accessToken}"
+                                href="https://bazario-e-commerce-frontend.onrender.com/verify/${accessToken}"
                                 style="
                                     background-color: #0f766e;
                                     color: #ffffff;
