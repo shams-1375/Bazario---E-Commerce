@@ -5,73 +5,59 @@ import { verifyEmail } from "../emailVerify/verifyEmail.js";
 import { sendOtpEmail } from "../emailVerify/sendOtpEmail.js";
 import { Session } from "../models/sessionModel.js";
 import cloudinary from "../utils/cloudinary.js";
+import { sendVerifyEmail } from "../emailVerify/resendEmail.js";
 
 
 
-// Creating a New User
+//Creating a New User
 export const register = async (req, res) => {
-    try {
-        const { firstName, lastName, email, password } = req.body;
+  try {
+    const { firstName, lastName, email, password } = req.body;
 
-        if (!firstName || !lastName || !email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required"
-            });
-        }
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: "User already exists"
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await User.create({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            isVerified: false
-        });
-
-        const token = jwt.sign(
-            { id: newUser._id },
-            process.env.SECRET_KEY,
-            { expiresIn: "10m" }
-        );
-
-        try {
-            await verifyEmail(token, email);
-        } catch (mailError) {
-            console.error("📧 Email failed:", mailError.message);
-
-            await User.findByIdAndDelete(newUser._id);
-
-            return res.status(500).json({
-                success: false,
-                message: "Could not send verification email. Please try again."
-            });
-        }
-
-        newUser.token = token;
-        await newUser.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Registration successful. Please check your email to verify your account."
-        });
-
-    } catch (error) {
-        console.error("Register error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        });
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ success: false, message: "All fields required" });
     }
+
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ success: false, message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      isVerified: false
+    });
+
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "10m",
+    });
+
+    try {
+      await sendVerifyEmail(token, email);
+    } catch (err) {
+      await User.findByIdAndDelete(user._id);
+      return res.status(500).json({
+        success: false,
+        message: "Email could not be sent. Please try again.",
+      });
+    }
+
+    user.token = token;
+    await user.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Account created. Check your email to verify.",
+    });
+
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
 };
 
 //Verifying Via Email
