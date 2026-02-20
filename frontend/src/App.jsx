@@ -23,7 +23,6 @@ import SingleProduct from './pages/SingleProduct'
 import AddressForm from './pages/AddressForm'
 import OrderSuccess from './pages/OrderSuccess'
 import ForgotPassword from './pages/ForgotPassword'
-import VerifyOtp from './pages/VerifyOtp'
 import SuccessPassword from './pages/SuccessPassword'
 
 
@@ -80,10 +79,6 @@ const router = createBrowserRouter([
    {
     path: '/password-changed',
     element: <ProtectedRoute><SuccessPassword/></ProtectedRoute>
-  },
-  {
-    path: '/verify-otp/:email',
-    element: <ProtectedRoute><VerifyOtp/></ProtectedRoute>
   },
   {
     path: '/dashboard',
