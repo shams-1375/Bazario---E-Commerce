@@ -8,7 +8,7 @@ import cloudinary from "../utils/cloudinary.js";
 
 
 
-//Creating a New User
+// Creating a New User
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
@@ -20,8 +20,8 @@ export const register = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ email });
-        if (user) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
                 message: "User already exists"
@@ -29,29 +29,47 @@ export const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const newUser = await User.create({
             firstName,
             lastName,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            isVerified: false
         });
 
-        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: "10m" });
+        const token = jwt.sign(
+            { id: newUser._id },
+            process.env.SECRET_KEY,
+            { expiresIn: "10m" }
+        );
 
-        await verifyEmail(token, email);
+        try {
+            await verifyEmail(token, email);
+        } catch (mailError) {
+            console.error("📧 Email failed:", mailError.message);
+
+            await User.findByIdAndDelete(newUser._id);
+
+            return res.status(500).json({
+                success: false,
+                message: "Could not send verification email. Please try again."
+            });
+        }
 
         newUser.token = token;
         await newUser.save();
 
         return res.status(201).json({
             success: true,
-            message: "User registered successfully",
-            user: newUser
+            message: "Registration successful. Please check your email to verify your account."
         });
+
     } catch (error) {
+        console.error("Register error:", error);
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "Internal server error"
         });
     }
 };
