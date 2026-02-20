@@ -11,6 +11,10 @@ export const verifyEmail = async (accessToken, email) => {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASSWORD,
             },
+            tls: {
+                rejectUnauthorized: false,
+                family: 4
+            }
         });
 
         const mailConfigurations = {
