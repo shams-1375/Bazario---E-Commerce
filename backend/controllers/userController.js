@@ -12,42 +12,49 @@ import cloudinary from "../utils/cloudinary.js";
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
+
         if (!firstName || !lastName || !email || !password) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "All fields are required"
-            })
+            });
         }
-        const user = await User.findOne({ email })
+
+        const user = await User.findOne({ email });
         if (user) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "User already exists"
-            })
+            });
         }
-        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
             firstName,
             lastName,
             email,
             password: hashedPassword
-        })
-        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: "10m" })
-        await verifyEmail(token, email)
-        newUser.token = token
-        await newUser.save()
+        });
+
+        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: "10m" });
+
+        await verifyEmail(token, email);
+
+        newUser.token = token;
+        await newUser.save();
+
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
             user: newUser
-        })
+        });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: error.message
-        })
+        });
     }
-}
+};
 
 //Verifying Via Email
 export const verify = async (req, res) => {
@@ -280,35 +287,35 @@ export const verifyOtp = async (req, res) => {
 
 //check password in db and current password 
 export const checkCurrentPassword = async (req, res) => {
-  try {
-    const { currentPassword } = req.body
-    const userId = req.user.id   // from isAuthenticated middleware
+    try {
+        const { currentPassword } = req.body
+        const userId = req.user.id   // from isAuthenticated middleware
 
-    const user = await User.findById(userId)
-    if (!user) {
-      return res.status(404).json({ success: false })
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ success: false })
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password)
+
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Current password is incorrect"
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Password verified"
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password)
-
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Current password is incorrect"
-      })
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Password verified"
-    })
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    })
-  }
 }
 
 
@@ -366,61 +373,61 @@ export const changePasswordOtp = async (req, res) => {
 
 //Change Password
 export const changePassword = async (req, res) => {
-  try {
-    const userIdToUpdate = req.params.id
-    const { newPassword, confirmPassword } = req.body
+    try {
+        const userIdToUpdate = req.params.id
+        const { newPassword, confirmPassword } = req.body
 
-    const loggedInUser = req.user // from auth middleware
+        const loggedInUser = req.user // from auth middleware
 
-    // Authorization check
-    if (
-      loggedInUser._id.toString() !== userIdToUpdate &&
-      loggedInUser.role !== "admin"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not allowed to update this profile"
-      })
+        // Authorization check
+        if (
+            loggedInUser._id.toString() !== userIdToUpdate &&
+            loggedInUser.role !== "admin"
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not allowed to update this profile"
+            })
+        }
+
+        // Find user correctly
+        const user = await User.findById(userIdToUpdate)
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        // Validation
+        if (!newPassword || !confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            })
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Passwords do not match"
+            })
+        }
+
+        // Hash & save
+        user.password = await bcrypt.hash(newPassword, 10)
+        await user.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Password changed successfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
-
-    // Find user correctly
-    const user = await User.findById(userIdToUpdate)
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      })
-    }
-
-    // Validation
-    if (!newPassword || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required"
-      })
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match"
-      })
-    }
-
-    // Hash & save
-    user.password = await bcrypt.hash(newPassword, 10)
-    await user.save()
-
-    res.status(200).json({
-      success: true,
-      message: "Password changed successfully"
-    })
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    })
-  }
 }
 
 
@@ -541,7 +548,7 @@ export const addAddress = async (req, res) => {
         const user = await User.findById(req.id); // req.id from isAuthenticated
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        user.addresses.push(req.body); 
+        user.addresses.push(req.body);
         await user.save();
         res.status(200).json({ success: true, addresses: user.addresses });
     } catch (error) {

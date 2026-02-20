@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 
 const Cart = () => {
   const { cart } = useSelector(store => store.product)
-  console.log(cart);
 
   const subTotal = cart?.totalPrice
   const shipping = subTotal > 299 ? 0 : 10

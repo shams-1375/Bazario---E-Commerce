@@ -87,7 +87,6 @@ const Products = () => {
         <div className="pt-20 pb-10 relative">
             <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6">
 
-                {/* OVERLAY */}
                 {isFilterOpen && (
                     <div
                         onClick={() => setIsFilterOpen(false)}

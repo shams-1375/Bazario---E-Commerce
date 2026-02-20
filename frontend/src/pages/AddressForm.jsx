@@ -45,7 +45,10 @@ const AddressForm = () => {
                     dispatch(setAddresses(data.addresses));
                 }
             } catch (error) {
-                console.log("Error fetching addresses:", error);
+                res.status(400).json({
+                    status: false,
+                    message: "Error While Fetching address"
+                })
             }
         };
         if (accessToken) fetchAddresses();
@@ -58,7 +61,7 @@ const AddressForm = () => {
                 headers: { Authorization: `Bearer ${accessToken}` }
             });
             if (data.success) {
-                dispatch(setAddresses(data.addresses)); // Updates Redux with DB data
+                dispatch(setAddresses(data.addresses)); 
                 setShowForm(false);
                 toast.success("Address saved!");
             }
@@ -75,7 +78,7 @@ const AddressForm = () => {
                 headers: { Authorization: `Bearer ${accessToken}` }
             });
             if (data.success) {
-                dispatch(setAddresses(data.addresses)); // Syncs Redux with DB
+                dispatch(setAddresses(data.addresses));
                 toast.success("Address removed");
             }
         } catch (error) {
@@ -165,7 +168,6 @@ const AddressForm = () => {
             rzp.open()
 
         } catch (error) {
-            console.log(error)
             toast.error("Something went wrong while processing Payment")
         }
     }

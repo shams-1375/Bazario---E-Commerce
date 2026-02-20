@@ -5,10 +5,6 @@ import getDataUri from "../utils/dataUri.js";
 //add product 
 export const addProduct = async (req, res) => {
     try {
-
-        console.log("BODY:", req.body)
-        console.log("FILES:", req.files)
-
         const { productName, productDesc, productPrice, category, brand } = req.body
         const userId = req.id
         if (!productName || !productDesc || !productPrice || !category || !brand) {

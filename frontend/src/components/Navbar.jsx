@@ -38,7 +38,6 @@ const Navbar = () => {
       toast.error(
         error.response?.data?.message || "Logout failed"
       );
-      console.log(error);
     }
   };
 
