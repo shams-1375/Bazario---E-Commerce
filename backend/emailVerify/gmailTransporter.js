@@ -18,9 +18,10 @@ export const createTransporter = async () => {
     const { token } = await oauth2Client.getAccessToken();
 
     return nodemailer.createTransport({
-      host: "smtp.gmail.com", 
-      port: 465,
-      secure: true,
+      host: "smtp.gmail.com",
+      port: 587,  
+      secure: false,       
+      family: 4,              
       auth: {
         type: "OAuth2",
         user: process.env.GMAIL_USER,
@@ -29,11 +30,9 @@ export const createTransporter = async () => {
         refreshToken: process.env.GMAIL_REFRESH_TOKEN,
         accessToken: token,
       },
-     
       tls: {
-        family: 4,
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: true,
+      },
     });
   } catch (error) {
     console.error("Failed to create transporter:", error);
