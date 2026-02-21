@@ -1,7 +1,6 @@
 import { User } from "../models/userModel.js"
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
-import { verifyEmail } from "../emailVerify/verifyEmail.js";
 import { sendOtpEmail } from "../emailVerify/sendOtpEmail.js";
 import { Session } from "../models/sessionModel.js";
 import cloudinary from "../utils/cloudinary.js";
@@ -11,53 +10,53 @@ import { sendVerifyEmail } from "../emailVerify/resendEmail.js";
 
 //Creating a New User
 export const register = async (req, res) => {
-  try {
-    const { firstName, lastName, email, password } = req.body;
-
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({ success: false, message: "All fields required" });
-    }
-
-    const exists = await User.findOne({ email });
-    if (exists) {
-      return res.status(400).json({ success: false, message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      isVerified: false
-    });
-
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "10m",
-    });
-
     try {
-      await sendVerifyEmail(token, email);
+        const { firstName, lastName, email, password } = req.body;
+
+        if (!firstName || !lastName || !email || !password) {
+            return res.status(400).json({ success: false, message: "All fields required" });
+        }
+
+        const exists = await User.findOne({ email });
+        if (exists) {
+            return res.status(400).json({ success: false, message: "User already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            isVerified: false
+        });
+
+        const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+            expiresIn: "10m",
+        });
+
+        try {
+            await sendVerifyEmail(token, email);
+        } catch (err) {
+            await User.findByIdAndDelete(user._id);
+            return res.status(500).json({
+                success: false,
+                message: "Email could not be sent. Please try again.",
+            });
+        }
+
+        user.token = token;
+        await user.save();
+
+        return res.status(201).json({
+            success: true,
+            message: "Account created. Check your email to verify.",
+        });
+
     } catch (err) {
-      await User.findByIdAndDelete(user._id);
-      return res.status(500).json({
-        success: false,
-        message: "Email could not be sent. Please try again.",
-      });
+        return res.status(500).json({ success: false, message: err.message });
     }
-
-    user.token = token;
-    await user.save();
-
-    return res.status(201).json({
-      success: true,
-      message: "Account created. Check your email to verify.",
-    });
-
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
 };
 
 //Verifying Via Email
@@ -221,7 +220,18 @@ export const forgotPassword = async (req, res) => {
         user.otpExpiry = otpExpiry
         await user.save()
 
-        await sendOtpEmail(otp, email)
+        try {
+            await sendOtpEmail(otp, email);
+        } catch (err) {
+            user.otp = null;
+            user.otpExpiry = null;
+            await user.save();
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to send OTP. Please try again.",
+            });
+        }
 
         return res.status(200).json({
             success: true,

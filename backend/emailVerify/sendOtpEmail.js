@@ -1,13 +1,14 @@
 import { Resend } from "resend";
+import "dotenv/config";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpEmail = async (otp, email) => {
   try {
     await resend.emails.send({
-      from: "Bazario <bazario@resend.dev>",
+      from: "Bazario <onboarding@resend.dev>",
       to: email,
-      subject: "Your Password Reset OTP 🔐",
+      subject: "Bazario - Your Password Reset OTP 🔐",
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
           <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 8px;">
