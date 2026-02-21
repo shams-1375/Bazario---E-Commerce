@@ -1,9 +1,11 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 // import Logo from '../assets/Logo.png'
 import { FaFacebook, FaInstagram, FaPinterest, FaTwitterSquare } from 'react-icons/fa'
 
 const Footer = () => {
+        const navigate = useNavigate()
+
     return (
         <footer className='bg-gray-900 text-gray-200 py-12'>
             <div className='max-w-7xl mx-auto px-4 md:flex md:justify-between'>
@@ -14,20 +16,19 @@ const Footer = () => {
                         <img src='/Ekart.png' alt="" className='w-32' />
                     </Link>
                     <p className='mt-2 text-sm'>Powering Your World with the Best in Electronics.</p>
-                    <p className='mt-2 text-sm'>123 Electronics St, Style City, NY 10001</p>
-                    <p className='text-sm'>Email: support@bazario.com</p>
-                    <p className='text-sm'>Phone: +(123) 456-7890</p>
+                    <p className='mt-2 text-sm'>123 Tech park, HiTech City, Hyderabad, India</p>
+                    <p className='text-sm'>Email: bazarioelectronics@gmail.com</p>
+                    <p className='text-sm'>Phone: +91 98xxx 4xx10</p>
                 </div>
 
                 {/* customer service link */}
                 <div className='mb-6 md:mb-0'>
                     <h3 className='text-xl font-semibold'>Customer Service</h3>
                     <ul className='mt-2 text-sm space-y-2'>
-                        <li>Contact Us</li>
-                        <li>Shipping & Returns</li>
-                        <li>FAQs</li>
-                        <li>Order Tracking</li>
-                        <li>Size Guide</li>
+                        <li className=' cursor-pointer ' onClick={() => navigate('/contact')} >Contact Us</li>
+                        <li className=' cursor-pointer ' onClick={() => navigate('/shipping-returns')}>Shipping & Returns</li>
+                        <li className=' cursor-pointer ' onClick={() => navigate('/faqs')}>FAQs</li>
+                        <li className=' cursor-pointer ' onClick={() => navigate('/order-tracking')}>Order Tracking</li>
                     </ul>
                 </div>
 

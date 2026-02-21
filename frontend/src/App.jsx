@@ -21,6 +21,10 @@ import SingleProduct from './pages/SingleProduct'
 import AddressForm from './pages/AddressForm'
 import OrderSuccess from './pages/OrderSuccess'
 import SuccessPassword from './pages/SuccessPassword'
+import ContactUs from './pages/ContactUs'
+import ShippingReturn from './pages/ShippingReturn'
+import FAQs from './pages/FAQs'
+import OrderTracking from './pages/OrderTracking'
 
 
 
@@ -28,6 +32,22 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <><Navbar/><Home/><Footer/></>
+  },
+  {
+    path: '/contact',
+    element: <><ContactUs/></>
+  },
+  {
+    path: '/shipping-returns',
+    element: <><ShippingReturn/></>
+  },
+  {
+    path: '/faqs',
+    element: <><FAQs/></>
+  },
+  {
+    path: '/order-tracking',
+    element: <><OrderTracking/></>
   },
   {
     path: '/signup',
