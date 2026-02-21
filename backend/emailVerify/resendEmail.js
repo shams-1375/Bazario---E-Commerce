@@ -1,14 +1,14 @@
-import { Resend } from "resend";
+import { createTransporter } from "./gmailTransporter.js";
 import "dotenv/config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerifyEmail = async (token, email) => {
+    const transporter = await createTransporter();
     try {
-        await resend.emails.send({
-            from: "Bazario <onboarding@resend.dev>",
+        await transporter.sendMail({
+            from: `"Bazario" <${process.env.GMAIL_USER}>`,
             to: email,
-            subject: "Bazario - Verify Your Email Address 🚀",
+            subject: "Verify Your Email",
             html: `
         <div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:20px;">
           <div style="max-width:500px;margin:auto;background:#fff;padding:25px;border-radius:8px;">
@@ -30,7 +30,7 @@ export const sendVerifyEmail = async (token, email) => {
       `,
         });
     } catch (error) {
-        console.error("Resend verify email error:", error);
+        console.error("Gmail verify email error:", error);
         throw new Error("Failed to send verification email");
     }
 };

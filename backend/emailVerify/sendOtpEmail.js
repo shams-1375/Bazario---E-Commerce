@@ -1,12 +1,13 @@
-import { Resend } from "resend";
+import { createTransporter } from "./gmailTransporter.js";
 import "dotenv/config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOtpEmail = async (otp, email) => {
+  const transporter = await createTransporter();
+
   try {
-    await resend.emails.send({
-      from: "Bazario <onboarding@resend.dev>",
+    await transporter.sendMail({
+      from: `"Bazario" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: "Bazario - Your Password Reset OTP 🔐",
       html: `

@@ -7,13 +7,13 @@
     "datauri": "^4.1.0",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "googleapis": "^171.4.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.6",
     "multer": "^2.0.2",
     "nodemailer": "^8.0.1",
     "nodemon": "^3.1.11",
-    "razorpay": "^2.9.6",
-    "resend": "^6.9.2"
+    "razorpay": "^2.9.6"
   },
   "scripts": {
     "start": "node server.js",
