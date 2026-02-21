@@ -4,8 +4,6 @@ import Home from './pages/Home'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
-import Verify from './pages/Verify'
-import VerifyEmail from './pages/VerifyEmail'
 import Footer from './components/Footer'
 import Profile from './pages/Profile'
 import Products from './pages/Products'
@@ -22,7 +20,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 import SingleProduct from './pages/SingleProduct'
 import AddressForm from './pages/AddressForm'
 import OrderSuccess from './pages/OrderSuccess'
-import ForgotPassword from './pages/ForgotPassword'
 import SuccessPassword from './pages/SuccessPassword'
 
 
@@ -39,14 +36,6 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <><Login/></>
-  },
-  {
-    path: '/verify',
-    element: <><Verify/></>
-  },
-  {
-    path: '/verify/:token',
-    element: <><VerifyEmail/></>
   },
   {
     path: '/profile/:userId',
@@ -71,10 +60,6 @@ const router = createBrowserRouter([
   {
     path: '/order-success',
     element: <ProtectedRoute><OrderSuccess/></ProtectedRoute>
-  },
-  {
-    path: '/forgot-password',
-    element: <ForgotPassword/>
   },
    {
     path: '/password-changed',

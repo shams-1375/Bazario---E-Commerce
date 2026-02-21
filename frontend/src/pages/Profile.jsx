@@ -250,22 +250,6 @@ const Profile = () => {
                                             showPassword ? <EyeOff className='w-5 h-5 text-gray-500 absolute right-5 bottom-2 cursor-pointer ' onClick={() => setShowPassword(false)} /> : <Eye className='w-5 h-5 text-gray-500 absolute right-5 bottom-2 cursor-pointer ' onClick={() => setShowPassword(true)} />
                                         }
                                     </div>
-
-                                    <div className="flex justify-between items-center mt-4">
-                                        <span
-                                            onClick={() => navigate("/forgot-password")}
-                                            className="text-sm text-teal-600 underline cursor-pointer hover:text-teal-800"
-                                        >
-                                            Forgot your password?
-                                        </span>
-
-                                        <Button
-                                            onClick={handleCheckPassword}
-                                            className="bg-teal-600 hover:bg-teal-700 px-6"
-                                        >
-                                            {checking ? "Checking..." : "Change Password"}
-                                        </Button>
-                                    </div>
                                 </>
                             )}
 

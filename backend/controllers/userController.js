@@ -1,13 +1,11 @@
 import { User } from "../models/userModel.js"
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
-import { sendOtpEmail } from "../emailVerify/sendOtpEmail.js";
 import { Session } from "../models/sessionModel.js";
 import cloudinary from "../utils/cloudinary.js";
-import { sendVerifyEmail } from "../emailVerify/resendEmail.js";
 
 
-//Creating a New User
+// Creating a New User
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
@@ -28,101 +26,19 @@ export const register = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-            isVerified: false
+            isVerified: true
         });
-
-        const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-            expiresIn: "10m",
-        });
-
-        try {
-            await sendVerifyEmail(token, email);
-        } catch (err) {
-            await User.findByIdAndDelete(user._id);
-            return res.status(500).json({
-                success: false,
-                message: "Email could not be sent. Please try again.",
-            });
-        }
-
-        user.token = token;
-        await user.save();
 
         return res.status(201).json({
             success: true,
-            message: "Account created. Check your email to verify.",
+            message: "Account created successfully! You can now login. 🎉",
         });
 
     } catch (err) {
-        return res.status(500).json({ success: false, message: err.message });
+        console.error("Registration Error:", err);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
-
-//Verifying Via Email
-export const verify = async (req, res) => {
-    try {
-        const { token } = req.params
-        const decoded = jwt.verify(token, process.env.SECRET_KEY)
-
-        const user = await User.findById(decoded.id)
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "User Not Found"
-            })
-        }
-
-        if (user.isVerified) {
-            return res.status(200).json({
-                success: true,
-                message: "Already verified"
-            })
-        }
-
-        user.isVerified = true
-        user.token = null
-        await user.save()
-
-        return res.status(200).json({
-            success: true,
-            message: "Email Verified Successfully"
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: "Verification link expired or invalid"
-        })
-    }
-}
-
-
-//ReVerify option for User
-export const reVerify = async (req, res) => {
-    try {
-        const { email } = req.body
-        const user = await User.findOne({ email })
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "User Not Found"
-            })
-        }
-        const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: "10m" })
-        verifyEmail(token, email)
-        user.token = token
-        await user.save()
-        return res.status(200).json({
-            success: true,
-            message: "Email Send again successfully",
-            token: user.token
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
 
 //Logging In Registerd User
 export const login = async (req, res) => {
@@ -202,102 +118,6 @@ export const logout = async (req, res) => {
     }
 }
 
-//Forgot Password (generate OTP)
-export const forgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
-        const user = await User.findOne({ email })
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-        const otp = Math.floor(100000 + Math.random() * 900000).toString()
-        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000)
-        user.otp = otp
-        user.otpExpiry = otpExpiry
-        await user.save()
-
-        try {
-            await sendOtpEmail(otp, email);
-        } catch (err) {
-            user.otp = null;
-            user.otpExpiry = null;
-            await user.save();
-
-            return res.status(500).json({
-                success: false,
-                message: "Failed to send OTP. Please try again.",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Otp sent to email successfully"
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-//Verify OTP 
-export const verifyOtp = async (req, res) => {
-    try {
-        const { otp } = req.body;
-        const email = req.params.email
-        if (!otp) {
-            return res.status(400).json({
-                success: false,
-                message: "Otp is required"
-            })
-        }
-        const user = await User.findOne({ email })
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "User Not Found"
-            })
-        }
-        if (!user.otp || !user.otpExpiry) {
-            return res.status(400).json({
-                success: false,
-                message: "Otp is not generated or already verified"
-            })
-        }
-        if (user.otpExpiry < new Date()) {
-            return res.status(400).json({
-                success: false,
-                message: "Otp is Expired Please request another"
-            })
-        }
-        if (otp !== user.otp) {
-            return res.status(400).json({
-                success: false,
-                message: "Otp is Invalid"
-            })
-        }
-        user.otp = null
-        user.otpExpiry = null
-        user.isOtpVerified = true
-        await user.save()
-        return res.status(200).json({
-            success: true,
-            message: "Otp Verified Successfully"
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
 //check password in db and current password 
 export const checkCurrentPassword = async (req, res) => {
     try {
@@ -321,59 +141,6 @@ export const checkCurrentPassword = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Password verified"
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-
-//Change Password with OTP
-export const changePasswordOtp = async (req, res) => {
-    try {
-        const { newPassword, confirmPassword } = req.body
-        const { email } = req.params
-
-        const user = await User.findOne({ email })
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "User Not Found"
-            })
-        }
-
-        if (!user.isOtpVerified) {
-            return res.status(400).json({
-                success: false,
-                message: "OTP verification required"
-            })
-        }
-
-        if (!newPassword || !confirmPassword) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required"
-            })
-        }
-
-        if (newPassword !== confirmPassword) {
-            return res.status(400).json({
-                success: false,
-                message: "Passwords do not match"
-            })
-        }
-
-        user.password = await bcrypt.hash(newPassword, 10)
-        user.isOtpVerified = false // reset
-        await user.save()
-
-        return res.status(200).json({
-            success: true,
-            message: "Password changed successfully"
         })
 
     } catch (error) {

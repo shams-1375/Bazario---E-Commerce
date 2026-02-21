@@ -109,14 +109,6 @@ const Login = () => {
                 }
               </div>
             </div>
-            <div className="flex justify-between items-center mt-3">
-              <span
-                onClick={() => navigate("/forgot-password")}
-                className="text-sm text-teal-600 underline cursor-pointer hover:text-teal-800"
-              >
-                Forgot your password?
-              </span>
-            </div>
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
