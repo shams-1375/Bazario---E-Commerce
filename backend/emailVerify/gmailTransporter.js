@@ -14,17 +14,22 @@ oauth2Client.setCredentials({
 });
 
 export const createTransporter = async () => {
-  const accessToken = await oauth2Client.getAccessToken();
+  try {
+    const { token } = await oauth2Client.getAccessToken();
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "OAuth2",
-      user: process.env.GMAIL_USER,
-      clientId: process.env.GMAIL_CLIENT_ID,
-      clientSecret: process.env.GMAIL_CLIENT_SECRET,
-      refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-      accessToken: accessToken.token,
-    },
-  });
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: process.env.GMAIL_USER,
+        clientId: process.env.GMAIL_CLIENT_ID,
+        clientSecret: process.env.GMAIL_CLIENT_SECRET,
+        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+        accessToken: token,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to create transporter:", error);
+    throw error;
+  }
 };

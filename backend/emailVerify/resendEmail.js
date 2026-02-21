@@ -1,7 +1,6 @@
 import { createTransporter } from "./gmailTransporter.js";
 import "dotenv/config";
 
-
 export const sendVerifyEmail = async (token, email) => {
     const transporter = await createTransporter();
     try {

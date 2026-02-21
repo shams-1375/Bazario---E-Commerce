@@ -7,7 +7,6 @@ import cloudinary from "../utils/cloudinary.js";
 import { sendVerifyEmail } from "../emailVerify/resendEmail.js";
 
 
-
 //Creating a New User
 export const register = async (req, res) => {
     try {

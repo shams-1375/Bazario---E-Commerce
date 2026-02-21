@@ -1,7 +1,6 @@
 import { createTransporter } from "./gmailTransporter.js";
 import "dotenv/config";
 
-
 export const sendOtpEmail = async (otp, email) => {
   const transporter = await createTransporter();
 
