@@ -132,9 +132,9 @@ const AdminProduct = () => {
   }
 
   return (
-    <div className='pl-87.5 py-20 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100'>
+    <div className='pl-87.5 py-20 mt-3 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100'>
       <div className='flex justify-between'>
-        <div className='relative mt-3 bg-white rounded-lg'>
+        <div className='relative bg-white rounded-lg'>
           <Input type='text' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search Product..." className='w-100 items-center' />
           <Search className='absolute right-3 top-1.5 text-gray-500' />
         </div>
@@ -168,7 +168,7 @@ const AdminProduct = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-156.25 max-h-185 overflow-y-scroll">
                     <DialogHeader>
-                      <DialogTitle>Edit profile</DialogTitle>
+                      <DialogTitle>Edit Product</DialogTitle>
                       <DialogDescription>
                         Make changes to your Product here. Click save when you're
                         done.
