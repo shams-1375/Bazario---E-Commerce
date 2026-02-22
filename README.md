@@ -6,7 +6,7 @@ Bazario is a full-stack e-commerce web application featuring **User** and **Admi
 
 ## 🚀 Live Demo
 
-- **Frontend (User App):** https://taskify-frontend-c7lm.onrender.com  
+- **Frontend (User App):** https://bazario-e-commerce-frontend.onrender.com/ 
 - **Admin Panel:** Available via admin credentials
 
 ---
