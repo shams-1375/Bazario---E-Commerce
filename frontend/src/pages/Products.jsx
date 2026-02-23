@@ -6,7 +6,6 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -15,7 +14,7 @@ import { toast } from 'sonner'
 import api from "../api/axios";
 import { useDispatch, useSelector } from 'react-redux'
 import { setProducts } from '@/redux/productSlice'
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { Input } from '@/components/ui/input'
 
 
