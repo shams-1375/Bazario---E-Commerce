@@ -124,48 +124,47 @@ const Products = () => {
                         }`}
                 >
 
-                    {/* TOP BAR */}
-                    <div className="flex justify-between items-center mt-3 mb-4">
-                        <div className="flex items-center gap-3">
-                            {/* FILTER BUTTON (mobile / tablet only) */}
-                            <button
-                                onClick={() => setIsFilterOpen(true)}
-                                className="lg:hidden flex items-center gap-1.5 border border-teal-600 text-teal-600 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-teal-50 transition" >
-                                Filter
-                                <ChevronRight size={16} />
-                            </button>
-                        </div>
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mt-3 mb-6">
 
-                        {/* Search */}
-                        <div className="">
+                        <div className="order-1 md:order-2 flex-1 max-w-xl">
                             <Input
                                 type="text"
                                 placeholder="Search products..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="bg-gray-50 border w-full rounded-lg"
+                                className="bg-gray-50 border w-full rounded-lg h-10"
                             />
                         </div>
 
-                        {/* SORT */}
-                        <Select onValueChange={(value) => setSortOrder(value)}>
-                            <SelectTrigger className="w-40 sm:w-52">
-                                <SelectValue placeholder="Sort by Price" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="lowToHigh">
-                                        Price: Low → High
-                                    </SelectItem>
-                                    <SelectItem value="highToLow">
-                                        Price: High → Low
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <div className="order-2 md:order-1 flex items-center justify-between md:justify-start gap-3 w-full md:w-auto">
+                            {/* FILTER BUTTON */}
+                            <button
+                                onClick={() => setIsFilterOpen(true)}
+                                className="lg:hidden flex items-center justify-center gap-1.5 border border-teal-600 text-teal-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-50 transition flex-1 sm:flex-none" >
+                                <SlidersHorizontal size={16} />
+                                Filter
+                                <ChevronRight size={16} className="hidden sm:block" />
+                            </button>
+
+                            {/* SORT SELECT */}
+                            <Select onValueChange={(value) => setSortOrder(value)}>
+                                <SelectTrigger className="w-full sm:w-52 h-10 flex-1 sm:flex-none">
+                                    <SelectValue placeholder="Sort by Price" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="lowToHigh">
+                                            Price: Low → High
+                                        </SelectItem>
+                                        <SelectItem value="highToLow">
+                                            Price: High → Low
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
-                    {/* PRODUCT GRID */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
                         {products.map((product) => (
                             <ProductCard
@@ -178,7 +177,6 @@ const Products = () => {
                 </div>
             </div>
         </div>
-
     )
 
 
