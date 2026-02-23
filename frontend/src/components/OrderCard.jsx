@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 const OrderCard = ({ userOrder }) => {
     const navigate = useNavigate()
     return (
-        <div className='px-4 md:pr-20 flex flex-col gap-3'>
+        <div className='px-4 flex flex-col gap-3 max-w-5xl mx-auto w-full'>
             <div className='w-full py-6 md:p-6'>
                 <div className='flex items-center gap-4 mb-6'>
                     <Button onClick={() => navigate(-1)}><ArrowLeft /></Button>

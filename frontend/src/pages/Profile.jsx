@@ -255,89 +255,91 @@ const Profile = () => {
                             </div>
 
                             {/* UPDATE PASSWORD SECTION */}
-                            <div className="mt-10 mb-10 max-w-2xl mx-auto bg-white border border-gray-200 shadow-md p-5 md:p-8 rounded-lg">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Update Password</h2>
-                                <>
-                                    {!passwordVerified ? (
-                                        <div className="space-y-4">
-                                            <div>
-                                                <Label>Current Password</Label>
-                                                <div className="relative mt-2">
+                            <div className="max-w-4xl mx-auto mt-10 mb-10">
+                                <div className="bg-white border border-gray-200 shadow-md p-5 md:p-8 rounded-lg">
+                                    <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Update Password</h2>
+                                    <>
+                                        {!passwordVerified ? (
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <Label>Current Password</Label>
+                                                    <div className="relative mt-2">
+                                                        <Input
+                                                            type={showPassword ? 'text' : 'password'}
+                                                            placeholder="Enter current password"
+                                                            value={currentPassword}
+                                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                                            className="pr-12"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                                        >
+                                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex justify-start">
+                                                    <Button
+                                                        onClick={handleCheckPassword}
+                                                        disabled={checking || !currentPassword}
+                                                        className="bg-teal-600 hover:bg-teal-700 px-6 transition-colors"
+                                                    >
+                                                        {checking ? "Checking..." : "Verify Current Password"}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3 animate-in fade-in duration-300">
+                                                <div className="relative">
                                                     <Input
-                                                        type={showPassword ? 'text' : 'password'}
-                                                        placeholder="Enter current password"
-                                                        value={currentPassword}
-                                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                                        type={showPassword ? "text" : "password"}
+                                                        placeholder="New Password"
+                                                        value={newPassword}
+                                                        onChange={(e) => setNewPassword(e.target.value)}
                                                         className="pr-12"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPassword(!showPassword)}
-                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
                                                     >
                                                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                                     </button>
                                                 </div>
-                                            </div>
 
-                                            <div className="flex justify-start">
+                                                <div className="relative">
+                                                    <Input
+                                                        type={showPassword ? "text" : "password"}
+                                                        placeholder="Confirm Password"
+                                                        value={confirmPassword}
+                                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                                        className={`pr-12 ${confirmPassword && newPassword !== confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                                    />
+                                                </div>
+
+                                                {confirmPassword && newPassword !== confirmPassword && (
+                                                    <p className="text-sm text-red-500 ml-1">
+                                                        Passwords do not match
+                                                    </p>
+                                                )}
+
                                                 <Button
-                                                    onClick={handleCheckPassword}
-                                                    disabled={checking || !currentPassword}
-                                                    className="bg-teal-600 hover:bg-teal-700 px-6 transition-colors"
+                                                    disabled={!passwordsMatch || !newPassword}
+                                                    onClick={handleChangePassword}
+                                                    className={`w-full mt-2 transition-all ${passwordsMatch && newPassword
+                                                        ? "bg-teal-600 hover:bg-teal-700 shadow-md"
+                                                        : "bg-gray-300 cursor-not-allowed text-gray-500"
+                                                        }`}
                                                 >
-                                                    {checking ? "Checking..." : "Verify Current Password"}
+                                                    Continue & Save
                                                 </Button>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-3 animate-in fade-in duration-300">
-                                            <div className="relative">
-                                                <Input
-                                                    type={showPassword ? "text" : "password"}
-                                                    placeholder="New Password"
-                                                    value={newPassword}
-                                                    onChange={(e) => setNewPassword(e.target.value)}
-                                                    className="pr-12"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-                                                >
-                                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                                                </button>
-                                            </div>
-
-                                            <div className="relative">
-                                                <Input
-                                                    type={showPassword ? "text" : "password"}
-                                                    placeholder="Confirm Password"
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    className={`pr-12 ${confirmPassword && newPassword !== confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}`}
-                                                />
-                                            </div>
-
-                                            {confirmPassword && newPassword !== confirmPassword && (
-                                                <p className="text-sm text-red-500 ml-1">
-                                                    Passwords do not match
-                                                </p>
-                                            )}
-
-                                            <Button
-                                                disabled={!passwordsMatch || !newPassword}
-                                                onClick={handleChangePassword}
-                                                className={`w-full mt-2 transition-all ${passwordsMatch && newPassword
-                                                    ? "bg-teal-600 hover:bg-teal-700 shadow-md"
-                                                    : "bg-gray-300 cursor-not-allowed text-gray-500"
-                                                    }`}
-                                            >
-                                                Continue & Save
-                                            </Button>
-                                        </div>
-                                    )}
-                                </>
+                                        )}
+                                    </>
+                                </div>
                             </div>
                         </div>
                     </TabsContent>
