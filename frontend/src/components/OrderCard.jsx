@@ -5,114 +5,80 @@ import { useNavigate } from 'react-router-dom'
 
 const OrderCard = ({ userOrder }) => {
     const navigate = useNavigate()
-
-
     return (
-        <div className="w-full px-2 sm:px-4 md:px-0 flex flex-col gap-3">
-            <div className="w-full max-w-5xl mx-auto p-2 sm:p-6">
-
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => navigate(-1)}
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                    </Button>
-                    <h1 className="text-xl md:text-2xl font-bold">My Orders</h1>
+        <div className='px-4 md:pr-20 flex flex-col gap-3'>
+            <div className='w-full py-6 md:p-6'>
+                <div className='flex items-center gap-4 mb-6'>
+                    <Button onClick={() => navigate(-1)}><ArrowLeft /></Button>
+                    <h1 className='text-xl md:text-2xl font-bold'>Orders</h1>
                 </div>
+                {
+                    userOrder?.length === 0 ? (
+                        <p className='text-gray-800 space-y-6 text-xl md:text-2xl'>No Orders found for this user</p>
+                    ) : (
+                        <div className='space-y-6 w-full'>
+                            {
+                                userOrder?.map((order) => (
+                                    <div key={order._id} className='shadow-lg rounded-2xl p-4 md:p-5 border border-gray-200'>
+                                        <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2'>
+                                            <h2 className='text-base md:text-lg font-semibold break-all'>
+                                                Orde ID:{" "}
+                                                <span className='text-gray-600'>{order._id}</span>
+                                            </h2>
+                                            <p className='text-sm text-gray-500'>
+                                                Amount: {"  "}
+                                                <span className='font-bold text-gray-900'>
+                                                    {order.currency} {order.amount.toFixed(2)}
+                                                </span>
+                                            </p>
+                                        </div>
 
-                {/* Empty State */}
-                {userOrder?.length === 0 ? (
-                    <div className="text-center py-20">
-                        <p className="text-gray-500 text-lg md:text-xl">
-                            No orders found
-                        </p>
-                        <p className="text-gray-400 text-sm mt-2">
-                            You haven’t placed any orders yet.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="space-y-6 w-full">
-                        {userOrder?.map((order) => (
-                            <div
-                                key={order._id}
-                                className="shadow-md rounded-2xl p-4 md:p-6 border border-gray-200 bg-white"
-                            >
-                                {/* Order Header */}
-                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
-                                    <h2 className="text-xs sm:text-sm md:text-lg font-semibold break-all">
-                                        Order ID:
-                                        <span className="block sm:inline text-gray-500 font-mono ml-0 sm:ml-2">
-                                            {order._id}
-                                        </span>
-                                    </h2>
-
-                                    <p className="text-sm bg-gray-100 px-3 py-1 rounded-full w-fit">
-                                        Total:
-                                        <span className="font-bold text-teal-700 ml-1">
-                                            {order.currency} {order.amount.toFixed(2)}
-                                        </span>
-                                    </p>
-                                </div>
-
-                                {/* Status */}
-                                <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-                                    <span
-                                        className={`text-xs uppercase tracking-wider font-bold px-3 py-1 rounded-full ${order.status === "Paid"
-                                                ? "bg-green-100 text-green-700"
-                                                : order.status === "Failed"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : "bg-orange-100 text-orange-700"
-                                            }`}
-                                    >
-                                        {order.status}
-                                    </span>
-                                </div>
-
-                                {/* Products */}
-                                <div className="mt-6">
-                                    <h3 className="font-medium mb-3 text-sm text-gray-600">
-                                        Products
-                                    </h3>
-
-                                    <div className="space-y-3">
-                                        {order.products.map((product, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex gap-3 bg-gray-50 p-3 rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98]"
-                                            >
-                                                <img
-                                                    onClick={() =>
-                                                        navigate(`/products/${product?.productId?._id}`)
-                                                    }
-                                                    className="w-14 h-14 md:w-20 md:h-20 object-cover rounded-lg cursor-pointer shrink-0"
-                                                    src={product.productId?.productImg?.[0]?.url}
-                                                    alt="product"
-                                                />
-
-                                                <div className="flex flex-col gap-1 w-full">
-                                                    <span className="text-sm font-medium line-clamp-2">
-                                                        {product.productId?.productName}
-                                                    </span>
-
-                                                    <span className="text-xs font-bold text-teal-800">
-                                                        ₹{product.productId?.productPrice} × {product.quantity}
-                                                    </span>
-                                                </div>
+                                        {/* user info */}
+                                        <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
+                                            <div className='mb-4'>
+                                                <p className='text-sm text-gray-700'>
+                                                    <span className='font-medium'>User:</span>{" "}
+                                                    {order.user?.firstName || "Unknown"} {order.user?.lastName}
+                                                </p>
+                                                <p className='text-sm text-gray-600 break-all'>
+                                                    Email: {order.user?.email || "N/A"}
+                                                </p>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                            <span className={`${order.status === "Paid" ? "bg-green-500" : order.status ===
+                                                "Failed" ? "bg-red-500" : "bg-orange-300"} text-white px-3 py-1 rounded-lg text-sm`}>
+                                                {order.status}</span>
+                                        </div>
 
-                            </div>
-                        ))}
-                    </div>
-                )}
+                                        {/* products */}
+                                        <div className='mt-4'>
+                                            <h3 className='font-medium mb-2'>Products:</h3>
+                                            <ul className='space-y-2'>
+                                                {
+                                                    order.products.map((product, index) => (
+                                                        <li key={index} className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50 p-3 rounded-lg gap-3'>
+                                                            <div className='flex items-center gap-3 w-full sm:w-auto'>
+                                                                <img onClick={() => navigate(`/products/${product?.productId?._id}`)}
+                                                                    className='w-16 h-16 object-cover rounded cursor-pointer shrink-0' src={product.productId?.productImg?.[0].url} alt=""
+                                                                />
+                                                                <span className='text-sm md:w-75 line-clamp-2'>{product.productId?.productName}</span>
+                                                            </div>
+                                                            <span className='font-medium text-sm self-end sm:self-center'>
+                                                                ₹{product.productId?.productPrice} x {product.quantity}
+                                                            </span>
+                                                        </li>
+                                                    ))
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    )
+                }
             </div>
         </div>
-    );
+    )
 }
 
 export default OrderCard
